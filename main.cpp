@@ -1,8 +1,11 @@
 #include <stdio.h>
-#include "chain.h"
+#include "testing.h"
 
-typedef bool (*TEST)();
-#define numof(array)   (sizeof(array)/sizeof(array[0]))
+int main(){
+    Testing::ResolveChain();
+	return 0;
+}
+
 
 bool testSeperate(){
     int workA = 0;
@@ -42,13 +45,11 @@ bool testSeperate(){
     /* see if A chain has done its work */
     ChainA::ResolveChain();
     if(workA != 4) {
-        printf("seperate test fail");
         return false;
     }
 
     /* also check if the work of b chain remain untouched */
     if(workB != 0){
-        printf("seperate test fail");
         return false;
     }
 
@@ -57,18 +58,16 @@ bool testSeperate(){
     ChainB::ResolveChain();
     
     if(workB != 4) {
-        printf("seperate test fail");
         return false;
     }
 
     if(workA != 0){
-        printf("seperate test fail");
         return false;
     }
 
-    printf("seperate test OK\n");
     return true;
 }
+REGISTER_TEST(testSeperate);
 
 bool testSubClass(){
     /* only define a chain.the implementation of resolve is in the subclass */
@@ -105,24 +104,20 @@ bool testSubClass(){
     A_a.Chain(); A_b.Chain(); A_c.Chain(); A_d.Chain();
     RealChain::ResolveChain();
     if(4 != workA){
-        printf("subclass test fail");
         return false;
     }
 
     if(0 != workB){
-        printf("subclass test fail");
         return false;
     }
 
     B_a.Chain(); B_b.Chain(); B_c.Chain(); B_d.Chain();
     RealChain::ResolveChain();
     if(4 != workB){
-        printf("subclass test fail");
         return false;
     }
 
     if(4 != workA){
-        printf("subclass test fail");
         return false;
     }
 
@@ -130,27 +125,12 @@ bool testSubClass(){
     B_a.Chain(); B_b.Chain(); B_c.Chain(); B_d.Chain();
     RealChain::ResolveChain();
     if(8 != workB){
-        printf("subclass test fail");
         return false;
     }
-    if(8 != workB){
-        printf("subclass test fail");
+    if(8 != workA){
         return false;
     }
 
-    printf("testSubClass OK\n");
     return true;
 }
-
-int main(){
-    TEST tests[] = {
-        testSeperate,
-        testSubClass,
-    };
-    for(int i=0; i<numof(tests); i++) {
-        if(!(tests[i]())){
-            return 1;
-        }
-    }
-	return 0;
-}
+REGISTER_TEST(testSubClass);

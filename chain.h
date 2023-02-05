@@ -1,6 +1,8 @@
+#pragma once
+
 template<class child>
 class Link{
-private:
+protected:
 	static Link<child>* m_entry;
 	Link<child>* m_next;
 public:
