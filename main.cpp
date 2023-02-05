@@ -70,9 +70,82 @@ bool testSeperate(){
     return true;
 }
 
+bool testSubClass(){
+    /* only define a chain.the implementation of resolve is in the subclass */
+    class RealChain:public Link<RealChain>{};
+
+    class SubA:public RealChain{
+    private:
+        int* m_work;
+    public:
+        SubA(int* work){m_work = work;}
+        virtual void Resolve(){
+            (*m_work)++;
+        }
+    };
+
+    class SubB:public RealChain{
+    private:
+        int* m_work;
+    public:
+        SubB(int* work){m_work = work;}
+        virtual void Resolve(){
+            (*m_work)++;
+        }
+    };
+
+    int workA = 0;
+    int workB = 0;
+
+    /* make some links here */
+    SubA A_a(&workA),A_b(&workA),A_c(&workA),A_d(&workA);
+    SubB B_a(&workB),B_b(&workB),B_c(&workB),B_d(&workB);
+
+    /* chain them */
+    A_a.Chain(); A_b.Chain(); A_c.Chain(); A_d.Chain();
+    RealChain::ResolveChain();
+    if(4 != workA){
+        printf("subclass test fail");
+        return false;
+    }
+
+    if(0 != workB){
+        printf("subclass test fail");
+        return false;
+    }
+
+    B_a.Chain(); B_b.Chain(); B_c.Chain(); B_d.Chain();
+    RealChain::ResolveChain();
+    if(4 != workB){
+        printf("subclass test fail");
+        return false;
+    }
+
+    if(4 != workA){
+        printf("subclass test fail");
+        return false;
+    }
+
+    A_a.Chain(); A_b.Chain(); A_c.Chain(); A_d.Chain();
+    B_a.Chain(); B_b.Chain(); B_c.Chain(); B_d.Chain();
+    RealChain::ResolveChain();
+    if(8 != workB){
+        printf("subclass test fail");
+        return false;
+    }
+    if(8 != workB){
+        printf("subclass test fail");
+        return false;
+    }
+
+    printf("testSubClass OK\n");
+    return true;
+}
+
 int main(){
     TEST tests[] = {
         testSeperate,
+        testSubClass,
     };
     for(int i=0; i<numof(tests); i++) {
         if(!(tests[i]())){
